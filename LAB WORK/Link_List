@@ -1,0 +1,60 @@
+#include<stdio.h>
+#include <stdlib.h>
+
+typedef struct Node
+{
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct
+{
+    int size;
+    Node *head;
+    Node *tail;
+} Linkedlist;
+
+Node *createnode(int value){
+    Node *node=(Node*)malloc(sizeof(Node));
+    node->value=value;
+    node->next=NULL;
+    return node;
+}
+
+Linkedlist *createlinkedlist(){
+    Linkedlist *list=(Linkedlist*)malloc(sizeof(Linkedlist));
+    list->size=0;
+    list->head=NULL;
+    list->tail=NULL;
+    return list;
+}
+
+void Insert(int value, int position, Linkedlist *list){
+    Node *node = createnode(value);
+
+    if(position==0){
+        node->next = list->head;
+        list->head = node;
+        if(list->size==0)
+            list->tail = node;
+    }
+    else if(position==list->size){
+        list->tail->next = node;
+        list->tail = node;
+    }
+    else{
+        Node *curr = list->head;
+        for(int i=0; i<position-1; i++){
+            curr = curr->next;
+        }
+        node->next = curr->next;
+        curr->next = node;
+    }
+    list->size++;
+}
+
+int main()
+{
+
+    return 0;
+}
