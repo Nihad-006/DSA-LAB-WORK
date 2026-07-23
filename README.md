@@ -1,7 +1,7 @@
 # 📚 Data Structures & Algorithms (DSA)
 
 Welcome to my **Data Structures & Algorithms** repository.  
-This repository contains my university homework, lab work, and practice implementations in **C/C++**.
+This repository contains my College homework, lab work, and practice implementations in **C/C++**.
 
 ## 📂 Repository Structure
 
