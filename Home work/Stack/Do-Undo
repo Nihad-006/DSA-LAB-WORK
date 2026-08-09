@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LEN   100
+#define MAX_STACK 100
+
+/* ---------- Stack ADT (stores characters typed) ---------- */
+typedef struct {
+    char data[MAX_STACK];
+    int  top;   /* -1 means empty */
+} Stack;
+
+void stack_init(Stack *s) {
+    s->top = -1;
+}
+
+int stack_is_empty(Stack *s) {
+    return s->top == -1;
+}
+
+void stack_push(Stack *s, char c) {
+    if (s->top == MAX_STACK - 1) {
+        printf("Stack overflow!\n");
+        return;
+    }
+    s->data[++(s->top)] = c;
+}
+
+char stack_pop(Stack *s) {
+    if (stack_is_empty(s)) {
+        printf("Nothing to undo!\n");
+        return '\0';
+    }
+    return s->data[(s->top)--];
+}
+
+/* ---------- Text editor using the stack for undo ---------- */
+typedef struct {
+    char  buffer[MAX_LEN];
+    int   length;
+    Stack history;   /* stores every character typed, in order */
+} Editor;
+
+void editor_init(Editor *e) {
+    e->buffer[0] = '\0';
+    e->length = 0;
+    stack_init(&e->history);
+}
+
+void editor_type(Editor *e, char c) {
+    e->buffer[e->length++] = c;
+    e->buffer[e->length]   = '\0';
+    stack_push(&e->history, c);       /* record the action */
+}
+
+void editor_type_string(Editor *e, const char *s) {
+    while (*s) {
+        editor_type(e, *s);
+        s++;
+    }
+}
+
+void editor_undo(Editor *e) {
+    if (e->length == 0) {
+        printf("Nothing to undo!\n");
+        return;
+    }
+    stack_pop(&e->history);           /* remove last action from history */
+    e->length--;                      /* remove last character from buffer */
+    e->buffer[e->length] = '\0';
+}
+
+void editor_print(Editor *e) {
+    printf("Buffer: \"%s\"\n", e->buffer);
+}
+
+int main(void) {
+    Editor e;
+    editor_init(&e);
+
+    editor_type_string(&e, "Hello");
+    editor_print(&e);          /* Hello */
+
+    editor_type_string(&e, " World");
+    editor_print(&e);          /* Hello World */
+
+    printf("\n--- Undo x3 ---\n");
+    editor_undo(&e);
+    editor_undo(&e);
+    editor_undo(&e);
+    editor_print(&e);          /* Hello Wo */
+
+    printf("\n--- Undo x8 (more than remaining) ---\n");
+    for (int i = 0; i < 8; i++)
+        editor_undo(&e);
+    editor_print(&e);          /* empty, with "Nothing to undo!" once buffer runs out */
+
+    return 0;
+}
