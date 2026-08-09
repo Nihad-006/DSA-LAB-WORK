@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LEN 100
+
+typedef struct {
+    char data[MAX_LEN];
+    int  length;
+} MyString;
+
+void str_init(MyString *s, const char *value) {
+    strcpy(s->data, value);
+    s->length = strlen(value);
+}
+
+int str_length(MyString *s) {
+    return s->length;
+}
+
+void str_concat(MyString *s, const char *suffix) {
+    strcat(s->data, suffix);
+    s->length = strlen(s->data);
+}
+
+void str_print(MyString *s) {
+    printf("%s\n", s->data);
+}
+
+int str_compare(MyString *a, MyString *b) {
+    return strcmp(a->data, b->data);
+}
+
+void str_copy(MyString *dest, MyString *src) {
+    strcpy(dest->data, src->data);
+    dest->length = src->length;
+}
+
+/* find index of a substring; returns -1 if not found */
+int str_find(MyString *s, const char *needle) {
+    char *found = strstr(s->data, needle);
+    if (found == NULL) return -1;
+    return (int)(found - s->data);
+}
+
+/* extract 'len' characters starting at 'start' into 'result' */
+void str_substr(MyString *s, int start, int len, MyString *result) {
+    int i;
+    for (i = 0; i < len && (start + i) < s->length; i++) {
+        result->data[i] = s->data[start + i];
+    }
+    result->data[i] = '\0';
+    result->length = i;
+}
+
+int main(void) {
+    MyString college;
+    str_init(&college, "Sylhet Engineering College");
+    printf("Full name: ");
+    str_print(&college);
+    printf("Length: %d\n", str_length(&college));
+
+    /* find where "College" starts */
+    int idx = str_find(&college, "College");
+    if (idx != -1) {
+        printf("'College' found at index: %d\n", idx);
+
+        /* extract it using str_substr */
+        MyString word;
+        str_substr(&college, idx, strlen("College"), &word);
+        printf("Extracted word: ");
+        str_print(&word);
+    } else {
+        printf("'College' not found\n");
+    }
+
+    /* extract just "Sylhet" (first 6 characters) */
+    MyString city;
+    str_substr(&college, 0, 6, &city);
+    printf("Extracted city: ");
+    str_print(&city);
+
+    return 0;
+}
